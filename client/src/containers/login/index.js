@@ -13,13 +13,15 @@ import {
   Logo,
   Title
 } from './styled'
+import { useHistory } from "react-router-dom";
 
 const initialValues = {
-  email: '',
-  password: ''
+  email: 'repartidor1@yopmail.com',
+  password: 'Password123$'
 }
 
 const LogIn = () => {
+  const history = useHistory()
   const dispatch = useDispatch()
   return (
     <Container>
@@ -30,6 +32,7 @@ const LogIn = () => {
           initialValues={initialValues}
           validationSchema={logInValidation}
           onSubmit={(props) => {
+            props['history'] = history
             dispatch(LoginUser(props))
           }}
         >

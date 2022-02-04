@@ -4,7 +4,7 @@ import styled from 'styled-components'
 export const ButtonsContainer = styled.div`
   align-items: center;
   display: flex;
-  flex: 0.33;
+  flex: 0.22;
   justify-content: space-between;
 `
 

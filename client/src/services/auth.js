@@ -1,7 +1,6 @@
 import request from './request'
 
 function login(user) {
-  console.log('login', user)
   return request({
     url: 'api/v1/users/login/',
     method: 'POST',
@@ -29,8 +28,6 @@ function signup(user) {
 const AuthService = {
   login,
   signup,
-  // sendVerificationCode,
-  // confirmVerificationCode,
 }
 
 export default AuthService;

@@ -2,10 +2,13 @@ const initialState = {
   isLogged: false
 }
 
-const account = (state = initialState, { type, payload}) => {
-  switch(type) {
+const account = (state = initialState, { type, payload }) => {
+  switch (type) {
     case 'LOG_IN':
-      return state
+      return {
+        ...state,
+        isLogged: payload
+      }
     case 'LOG_OUT':
       return initialState
     case 'RESET':

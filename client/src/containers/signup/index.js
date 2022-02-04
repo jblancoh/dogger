@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
+import { useHistory } from "react-router-dom";
 import { Formik } from 'formik'
 import {
   Button,
@@ -26,6 +27,7 @@ const initialValues = {
 }
 
 const SignUp = () => {
+  const history = useHistory()
   const dispatch = useDispatch()
   return (
     <Container>
@@ -34,6 +36,7 @@ const SignUp = () => {
         initialValues={initialValues}
         validationSchema={signUpValidation}
         onSubmit={(props, actions) => {
+          props['history'] = history
           dispatch(SignUpUser(props))
         }}
       // validateOnChange={false}

@@ -13,7 +13,6 @@ service.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // Create interceptors for catch errors
 
 const handleError = ({ message, data, status }) => {
-  console.log('data', data)
   return Promise.reject({ message, data, status })
 }
 
@@ -30,7 +29,6 @@ const request = function (options) {
   const onSuccess = function (response) {
     return response.data;
   }
-  console.log('options', options)
   return service(options)
     .then(onSuccess)
 }

@@ -1,9 +1,9 @@
 import account from './account'
-import users from './users'
+import user from './users'
 import ui from './ui'
 
 export {
   account,
-  users,
+  user,
   ui
 }
