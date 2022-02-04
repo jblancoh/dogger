@@ -10,7 +10,7 @@ from dogger.models import Dogs as DogsModel
 from dogger.models import DogSize as DogSizeModel
 from dogger.models import Schedules as SchedulesModel
 from dogger.models import ScheduledWalks as ScheduledWalksModel
-from dogger.models import Walkers as WalkersModel
+from dogger.models import PetWalkers as WalkersModel
 
 # Create your views here.	
 
@@ -274,3 +274,29 @@ class WalkersDetailsView(APIView):
 		user = self.get_object(pk)
 		user.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
+class UsersView(APIView):
+	"""
+	Create and list users
+	"""
+	
+	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	
+	def get(self, request, format=None):
+		users = UsersModel.objects.all()
+		serializer = UserSerializer(users, many=True)
+		return Response(serializer.data)
+
+	def post(self, request, format=None):
+		serializer = UserSerializer(data=request.data)
+		if serializer.is_valid():
+			data = self.set_user(request.data)
+			serializer.save(account=data)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return  Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def set_user(self, data):
+		password = data.password
+		email = data.email
+		user = Auth.objects.create_user(email, password)
+		user.save()
+		return user.data

@@ -33,6 +33,6 @@ class ScheduledWalkSerializer(serializers.ModelSerializer):
 
 class WalkerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Walkers
+        model = PetWalkers
         fields = '__all__'
         depth = 5
