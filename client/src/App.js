@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
+import { ToastContainer } from 'react-toastify';
 import {
   BrowserRouter as Router,
   Switch,
@@ -10,22 +11,22 @@ import { Navbar } from './components'
 import {
   Home,
   LogIn,
-  LogUp
+  SignUp
 } from './containers';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AuthRoute = ({ isLogged }) => (
   <Route path="/dashboard">
     {
       isLogged
-      ? (<>
+        ? (<>
           <h6>Dashboard</h6>
-          {/* <Dashboard /> */}
         </>
         )
-      : (
+        : (
           <Redirect
             to={{
-              pathname:'/'
+              pathname: '/'
             }}
           />
         )
@@ -46,14 +47,15 @@ function App(props) {
           <Route path="/log-in">
             <LogIn />
           </Route>
-          <Route path="/log-up">
-            <LogUp />
+          <Route path="/sign-up">
+            <SignUp />
           </Route>
-          <AuthRoute 
+          <AuthRoute
             isLogged={isLogged}
           />
         </Switch>
       </div>
+      <ToastContainer />
     </Router>
   );
 }

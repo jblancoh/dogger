@@ -1,10 +1,12 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { Formik } from 'formik'
 import {
   Button,
   Input
 } from '../../components'
 import { logInValidation } from '../../validationSchemas'
+import { LoginUser } from '../../actions/account'
 import {
   Container,
   FormContainer,
@@ -18,6 +20,7 @@ const initialValues = {
 }
 
 const LogIn = () => {
+  const dispatch = useDispatch()
   return (
     <Container>
       <Logo src={require('../../assets/img/png/logo/dogger_logo.png')} alt='Dogger' />
@@ -27,7 +30,7 @@ const LogIn = () => {
           initialValues={initialValues}
           validationSchema={logInValidation}
           onSubmit={(props) => {
-            console.log('formik props >>>', props)
+            dispatch(LoginUser(props))
           }}
         >
           {({

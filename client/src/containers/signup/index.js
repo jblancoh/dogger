@@ -1,13 +1,17 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { Formik } from 'formik'
 import {
   Button,
   Input
 } from '../../components'
-import { logUpValidation } from '../../validationSchemas'
+import { signUpValidation } from '../../validationSchemas'
+import { SignUpUser } from '../../actions/account'
+
 import {
   Container,
-  Title
+  Title,
+  CheckboxContainer,
 } from './styled'
 
 const initialValues = {
@@ -17,19 +21,22 @@ const initialValues = {
   lastName: '',
   phone: '',
   address: '',
-  confirmPassword: ''
+  passwordConfirm: '',
+  isOwner: false,
 }
 
-const LogUp = () => {
+const SignUp = () => {
+  const dispatch = useDispatch()
   return (
     <Container>
       <Title>Registro</Title>
       <Formik
         initialValues={initialValues}
-        validationSchema={logUpValidation}
-        onSubmit={(props) => {
-          console.log('formik props >>>', props)
+        validationSchema={signUpValidation}
+        onSubmit={(props, actions) => {
+          dispatch(SignUpUser(props))
         }}
+      // validateOnChange={false}
       >
         {({
           values,
@@ -77,7 +84,7 @@ const LogUp = () => {
             />
             <Input
               error={errors.address}
-              label='Correo'
+              label='Dirección'
               name='address'
               onBlur={handleBlur}
               onChange={handleChange}
@@ -93,14 +100,25 @@ const LogUp = () => {
               value={values.password}
             />
             <Input
-              error={errors.confirmPassword}
+              error={errors.passwordConfirm}
               label='Confirmar contraseña'
-              name='confirmPassword'
+              name='passwordConfirm'
               onBlur={handleBlur}
               onChange={handleChange}
               type='password'
-              value={values.confirmPassword}
+              value={values.passwordConfirm}
             />
+            <CheckboxContainer>
+              <label>
+                {`Eres dueño? `}
+                <input
+                  name="isOwner"
+                  type="checkbox"
+                  checked={values.isOwner}
+                  onChange={handleChange}
+                />
+              </label>
+            </CheckboxContainer>
             <Button
               disabled={!isValid || isSubmitting}
               onPress={handleSubmit}
@@ -115,4 +133,4 @@ const LogUp = () => {
   )
 }
 
-export default LogUp
+export default SignUp

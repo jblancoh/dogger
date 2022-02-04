@@ -1,9 +1,10 @@
 import Home from './home'
 import LogIn from './login'
-import LogUp from './logup'
+// Se cambia nombre de componente y validaciones para mejor entendimiento.
+import SignUp from './signup'
 
 export {
   Home,
   LogIn,
-  LogUp
+  SignUp
 }

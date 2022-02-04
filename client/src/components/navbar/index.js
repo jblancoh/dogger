@@ -16,16 +16,16 @@ const Navbar = (props) => {
     <Container>
       <TitleContainer>
         <Logo src={require('../../assets/img/png/logo/dogger_icon.png')} alt='Logo' />
-        <Link to="/" style={{ textDecoration: 'none'}}>
+        <Link to="/" style={{ textDecoration: 'none' }}>
           <Title>
             Dogger
           </Title>
         </Link>
       </TitleContainer>
-      { !isLogged &&
+      {!isLogged &&
         (
           <ButtonsContainer>
-            <Link to="/log-up">
+            <Link to="/sign-up">
               <Button>
                 Registrarse
               </Button>
