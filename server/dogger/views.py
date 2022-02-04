@@ -304,6 +304,9 @@ class UsersSignUpView(APIView):
 		serializer=UserSignUpSerializer(data=request.data)
 		if serializer.is_valid():
 			user=serializer.save()
-			data=UserModelSerialzer(user).data,
+			data={
+					'user': UserModelSerialzer(user).data,
+					'message': 'Usuario creado con exito'
+			}
 			return Response(data, status=status.HTTP_201_CREATED)
 		return  Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -34,7 +34,7 @@ class UserSignUpSerializer(serializers.Serializer):
 
     email=serializers.EmailField(
       validators=[
-        UniqueValidator(queryset=Users.objects.all())
+        UniqueValidator(queryset=Users.objects.all(), message="A user with that email already exists.")
       ]
     )
 
@@ -46,8 +46,11 @@ class UserSignUpSerializer(serializers.Serializer):
     password=serializers.CharField(min_length=8, max_length=64)
     password_confirmation=serializers.CharField(min_length=8, max_length=64)
 
+    address = serializers.CharField(min_length=2, max_length=150, required=False)
     first_name = serializers.CharField(min_length=2, max_length=30)
     last_name = serializers.CharField(min_length=2, max_length=30)
+    is_owner = serializers.BooleanField(default=False)
+    is_walker = serializers.BooleanField(default=False)
 
     def validate(self, data):
         passwd = data['password']
@@ -60,8 +63,11 @@ class UserSignUpSerializer(serializers.Serializer):
     def create(self, data):
         data.pop('password_confirmation')
         data['username'] = data['email']
+        if data['is_owner']:
+          data['is_owner'] = data['is_owner']
+        else:
+          data['is_walker'] = True
         user = Users.objects.create_user(**data)
-        # send_confirmation_email.delay(user_pk=user.pk)
         return user
 
 
