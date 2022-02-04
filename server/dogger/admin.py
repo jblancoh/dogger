@@ -1,12 +1,11 @@
 from django.contrib import admin
 
 # Register your models here.
-from dogger.models import *
-
+from .models import *
 class AdminUsers(admin.ModelAdmin):
   list_display = ["email", "__str__", "timestamp"]
-  list_filter = ["email", "name", "last_name", "timestamp"]
-  search_fields = ["email", "name", "last_name", "timestamp"]
+  list_filter = ["email", "first_name", "last_name", "timestamp"]
+  search_fields = ["email", "first_name", "last_name", "timestamp"]
   class Meta:
       meta = Users
 
@@ -17,17 +16,16 @@ class AdminDogs(admin.ModelAdmin):
   class Meta:
       meta = Dogs
 
-
-class AdminScheduledWalks(admin.ModelAdmin):
-  list_display = ["schedule", "dog"]
-  list_filter = ["schedule", "dog"]
-  search_fields = ["schedule", "dog"]
-  class Meta:
-      meta = ScheduledWalks
+# class AdminScheduledWalks(admin.ModelAdmin):
+#   list_display = ["schedule", "dog"]
+#   list_filter = ["schedule", "dog"]
+#   search_fields = ["schedule", "dog"]
+#   class Meta:
+#       meta = ScheduledWalks
 
 admin.site.register(Users, AdminUsers)
 admin.site.register(Dogs, AdminDogs)
 admin.site.register(DogSize)
 admin.site.register(Schedules)
-admin.site.register(ScheduledWalks, AdminScheduledWalks)
-admin.site.register(Walkers)
+# admin.site.register(ScheduledWalks, AdminScheduledWalks)
+admin.site.register(PetWalkers)
