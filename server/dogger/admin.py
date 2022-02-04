@@ -3,9 +3,9 @@ from django.contrib import admin
 # Register your models here.
 from .models import *
 class AdminUsers(admin.ModelAdmin):
-  list_display = ["email", "__str__", "timestamp"]
-  list_filter = ["email", "first_name", "last_name", "timestamp"]
-  search_fields = ["email", "first_name", "last_name", "timestamp"]
+  list_display = ["__str__", "timestamp"]
+  list_filter = ["age", "timestamp"]
+  search_fields = ["age", "timestamp"]
   class Meta:
       meta = Users
 

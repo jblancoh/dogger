@@ -276,27 +276,34 @@ class WalkersDetailsView(APIView):
 		return Response(status=status.HTTP_204_NO_CONTENT)
 class UsersView(APIView):
 	"""
-	Create and list users
+	Login and list users
 	"""
 	
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	# permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	
 	def get(self, request, format=None):
 		users = UsersModel.objects.all()
-		serializer = UserSerializer(users, many=True)
+		serializer = UserModelSerialzer(users, many=True)
 		return Response(serializer.data)
 
-	def post(self, request, format=None):
-		serializer = UserSerializer(data=request.data)
+
+	def post(self, request, *args, **kwargs):
+		serializer=UserSerializer(data=request.data)
 		if serializer.is_valid():
-			data = self.set_user(request.data)
-			serializer.save(account=data)
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
+			user, token=serializer.save()
+			data={
+					'user': UserModelSerialzer(user).data,
+					'access_token': token
+			}
+			return Response(data, status=status.HTTP_201_CREATED)
 		return  Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def set_user(self, data):
-		password = data.password
-		email = data.email
-		user = Auth.objects.create_user(email, password)
-		user.save()
-		return user.data
+class UsersSignUpView(APIView):
+	
+	def post(self, request, *args, **kwargs):
+		serializer=UserSignUpSerializer(data=request.data)
+		if serializer.is_valid():
+			user=serializer.save()
+			data=UserModelSerialzer(user).data,
+			return Response(data, status=status.HTTP_201_CREATED)
+		return  Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

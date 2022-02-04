@@ -4,6 +4,8 @@ from dogger import views
 
 urlpatterns = [
     path('users/', views.UsersView.as_view()),
+    path('users/login/',views.UsersView.as_view(), name='login'),
+    path('users/signup/',views.UsersSignUpView.as_view(), name='signup'),
     path('users/<int:pk>/', views.UsersDetailsView.as_view()),
     path('dogs/', views.DogsView.as_view()),
     path('dogs/<int:pk>/', views.DogsDetailsView.as_view()),

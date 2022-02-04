@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 CHOICES = (
       ('monday', 'Monday'),
@@ -11,17 +11,21 @@ CHOICES = (
       ('saturday', 'Saturday'),
       ('sunday', 'Sunday')
     )
-class Users(models.Model):
-    profile = models.ForeignKey('auth.User', related_name='profile', on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    age = models.IntegerField()
-    email = models.EmailField(unique=True)
+class Users(AbstractUser):
+    email = models.EmailField(
+        'email address',
+        unique=True,
+        error_messages={
+            'unique': 'A user with that email already exists.'
+        }
+    )
+    age = models.IntegerField(null=True, blank=True)
+    phone_number = models.CharField(max_length=17, blank=True)
     avatar = models.ImageField(null=True, blank=True)
     timestamp= models.DateTimeField(auto_now_add=True)
 
     def __str__ (self):
-        return "%s %s - %s" % (self.first_name, self.last_name, self.email)
+        return "%s %s" % (self.email,self.timestamp)
 
 class PetWalkers(models.Model):
     walker = models.ForeignKey('Users', on_delete=models.CASCADE)
