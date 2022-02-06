@@ -4,15 +4,55 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
 # from django.contrib.auth.models import User
+from django.http import Http404
 
 
 from dogger.models import *
 
 
+class ScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Schedules
+        fields = '__all__'
+        depth = 1
+
 class UserModelSerialzer(serializers.ModelSerializer):
   class Meta:
       model = Users
-      fields=('first_name','last_name')
+      fields=('id','first_name','last_name', 'is_owner', 'is_walker')
+      depth = 1
+
+class WalkerSerializer(serializers.ModelSerializer):
+    walker = UserModelSerialzer(read_only=True)
+    schedules = ScheduleSerializer(many=True, read_only=True)
+    status = serializers.SerializerMethodField("status_method")
+    dogs = serializers.SerializerMethodField("dogs_method")
+
+    def status_method(self, obj):
+        schedules = obj.schedules.all()
+        if len(schedules) == 0:
+          return True
+        return False
+
+    def dogs_method(self, obj):
+        dogs = Dogs.objects.filter(walker=obj).values()        
+        return dogs
+    class Meta:
+        model = PetWalkers
+        fields = ['walker','schedules', 'status','dogs']
+
+class WalkerDogSerializer(serializers.ModelSerializer):
+    walker = UserModelSerialzer(read_only=True)
+    class Meta:
+        model = PetWalkers
+        fields = ['walker']
+class DogsModelSerialzer(serializers.ModelSerializer):
+  size = serializers.StringRelatedField()
+  breed = serializers.StringRelatedField()
+  walker = WalkerDogSerializer(read_only=True)
+  class Meta:
+      model = Dogs
+      fields=('id','name','size','age', 'breed','walker')
       depth = 1
 class UserSerializer(serializers.Serializer):
 
@@ -68,25 +108,54 @@ class UserSignUpSerializer(serializers.Serializer):
         else:
           data['is_walker'] = True
         user = Users.objects.create_user(**data)
+        walker = PetWalkers.objects.create(walker=user)
         return user
 
+class DogSerializer(serializers.Serializer):
+    owner_id = serializers.IntegerField(required=False)
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(min_length=2, max_length=30, required=False)
+    age = serializers.IntegerField(required=False)
+    breed = serializers.CharField(min_length=2, max_length=30,required=False)
+    size = serializers.CharField(min_length=2, max_length=10,required=False)
+    walker_id = serializers.IntegerField(required=False)
+    schedule_id = serializers.IntegerField(required=False)
 
-class DogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Dogs
-        fields = '__all__'
-        depth = 1
-
+    def create(self, validated_data):
+        validated_data['owner'] = Users.objects.get(pk=validated_data['owner_id'])
+        validated_data['size'] = DogSize.objects.get(size=validated_data['size'])
+        validated_data['breed'] = DogBreed.objects.get(name=validated_data['breed'])
+        dog = Dogs.objects.create(**validated_data)
+        return dog
+    
+    def update(self,instance, validated_data):
+        if 'walker_id' in validated_data:
+          try:
+            validated_data['walker'] = PetWalkers.objects.get(pk=validated_data['walker_id'])
+          except PetWalkers.DoesNotExist:
+            raise Http404
+          try:
+            validated_data['schedule'] = Schedules.objects.get(pk=validated_data['schedule_id'])
+          except Schedules.DoesNotExist:
+            raise Http404
+          instance.walker  = validated_data.get("walker", instance.walker)
+          schedule_walker = ScheduledWalks.objects.create(schedule=validated_data['schedule'], dog=instance)
+        if 'size' in validated_data:
+          validated_data['size'] = DogSize.objects.get(size=validated_data['size'])
+          instance.size = validated_data.get("size", instance.size)
+        if 'breed' in validated_data:
+          validated_data['breed'] = DogBreed.objects.get(name=validated_data['breed'])
+          instance.breed = validated_data.get("breed", instance.breed)
+        instance.name = validated_data.get("name", instance.name)
+        instance.age = validated_data.get("age", instance.age)
+        
+        instance.save()
+        return instance
+    
 class DogSizeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DogSize
         fields = '__all__'
-
-class ScheduleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Schedules
-        fields = '__all__'
-        depth = 1
 
 class ScheduledWalkSerializer(serializers.ModelSerializer):
     class Meta:
@@ -94,8 +163,3 @@ class ScheduledWalkSerializer(serializers.ModelSerializer):
         fields = '__all__'
         depth = 3
 
-class WalkerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PetWalkers
-        fields = '__all__'
-        depth = 5
