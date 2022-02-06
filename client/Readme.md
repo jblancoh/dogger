@@ -1,9 +1,7 @@
 # Dogger
 ## Librerias
 
----
-
-## React-Toastify
+### React-Toastify
 
   React-Toastify permite agregar tarjetas para notificaciones con facilidad
 
@@ -36,21 +34,3 @@ yarn add react-toastify
 #### Documentación
 
 [react-toastify](https://fkhadra.github.io/react-toastify/introduction)
-
-
----
-
-
-## React-table
-
-  Hooks para crear tablas de datos livianas, rápidas y extensibles para React
-
-#### Instalación
-
-```
-npm install react-table --save
-yarn add react-table
-```
-#### Documentación
-
-[react-table](https://react-table.tanstack.com/docs/overview)

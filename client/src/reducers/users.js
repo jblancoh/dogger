@@ -1,7 +1,10 @@
-const user = (state = {}, { type, payload }) => {
-  switch(type) {
+const user = (state = { data: {} }, { type, payload }) => {
+  switch (type) {
     case 'GET_USER':
-      return state
+      return {
+        ...state,
+        ...payload
+      }
     case 'RESET':
       return {}
     default:

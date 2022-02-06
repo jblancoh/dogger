@@ -1,23 +1,28 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { Formik } from 'formik'
 import {
   Button,
   Input
 } from '../../components'
 import { logInValidation } from '../../validationSchemas'
+import { LoginUser } from '../../actions/account'
 import {
   Container,
   FormContainer,
   Logo,
   Title
 } from './styled'
+import { useHistory } from "react-router-dom";
 
 const initialValues = {
-  email: '',
-  password: ''
+  email: 'repartidor1@yopmail.com',
+  password: 'Password123$'
 }
 
 const LogIn = () => {
+  const history = useHistory()
+  const dispatch = useDispatch()
   return (
     <Container>
       <Logo src={require('../../assets/img/png/logo/dogger_logo.png')} alt='Dogger' />
@@ -27,7 +32,8 @@ const LogIn = () => {
           initialValues={initialValues}
           validationSchema={logInValidation}
           onSubmit={(props) => {
-            console.log('formik props >>>', props)
+            props['history'] = history
+            dispatch(LoginUser(props))
           }}
         >
           {({

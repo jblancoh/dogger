@@ -78,3 +78,25 @@ Keep in mind some data about pshycology of colors, this palete has been selected
 Both frameworks initial docs are found here:
 - [ReactJS](./README-rj.md)
 - [Django](./README-django.md)
+
+# Dogger
+Dog owners and walkers meetter
+
+### Documentation
+[Docs](./docs/README.md)
+
+## Proceso de desarrollo
+
+- Se analizaron las funcionalidades mínimas y extras.
+- Se realizó tablero(kanban) para hacer seguimiento en GitHub.
+- Se analizó código Frontend(Client).
+- Se enlistó posibles pantallas faltantes y formularios.
+- Se maquetan pantallas a utilizar de manera anual con base en código previo hecho.
+- Se desarrolló y corrigió código de Frontend, creando pantallas principales.
+- Se analizó código Backend(Server)
+- Se enlistó posibles modelos faltantes.
+- Se desarrolló y corrigió código de Backend, creando y mejorando vistas principales.
+- Se realizan endpoints con funcionalidad esperada al hacer peticiones.
+- Se desplegó web y server.
+- Se revisan posibles bugs de lo realizado.
+- Se corrigen algunos bugs.

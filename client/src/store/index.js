@@ -12,7 +12,7 @@ import storage from 'redux-persist/lib/storage'
 
 import {
   account,
-  users,
+  user,
   ui
 } from '../reducers'
 
@@ -23,7 +23,7 @@ const persistConfig = {
 
 const reducers = combineReducers({
   account,
-  users,
+  user,
   ui
 })
 

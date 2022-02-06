@@ -1,31 +1,38 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import { Link } from "react-router-dom";
+import { LogoutUser } from "../../actions/account"
 import { Button } from '../'
 import {
   ButtonsContainer,
   Container,
   Logo,
   Title,
-  TitleContainer
+  TitleContainer,
+  Label,
 } from './styled'
 
 const Navbar = (props) => {
-  const { isLogged } = props
+  const dispatch = useDispatch()
+  const { isLogged, user } = props
+  console.log('user', user)
+  const handleLogout = () => {
+    dispatch(LogoutUser())
+  }
   return (
     <Container>
       <TitleContainer>
         <Logo src={require('../../assets/img/png/logo/dogger_icon.png')} alt='Logo' />
-        <Link to="/" style={{ textDecoration: 'none'}}>
+        <Link to="/" style={{ textDecoration: 'none' }}>
           <Title>
             Dogger
           </Title>
         </Link>
       </TitleContainer>
-      { !isLogged &&
+      {!isLogged ?
         (
           <ButtonsContainer>
-            <Link to="/log-up">
+            <Link to="/sign-up">
               <Button>
                 Registrarse
               </Button>
@@ -37,13 +44,28 @@ const Navbar = (props) => {
             </Link>
           </ButtonsContainer>
         )
+        : <ButtonsContainer>
+          <Label>
+            {`Hola ${user.first_name}`}
+          </Label>
+          <Link to="/dashboard">
+            <Button>
+              Mascotas
+            </Button>
+          </Link>
+          <Button onPress={handleLogout}>
+            Cerrar sesión
+          </Button>
+        </ButtonsContainer>
+
       }
     </Container>
   )
 }
 
-const mapStateToProps = ({ account }) => ({
-  isLogged: account.isLogged
+const mapStateToProps = ({ account, user }) => ({
+  isLogged: account.isLogged,
+  user: user.data,
 })
 
 export default connect(mapStateToProps)(Navbar)

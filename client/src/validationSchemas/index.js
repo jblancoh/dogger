@@ -1,7 +1,7 @@
 import logInValidation from './login'
-import logUpValidation from './logup'
+import signUpValidation from './signup'
 
 export {
   logInValidation,
-  logUpValidation
+  signUpValidation
 }
