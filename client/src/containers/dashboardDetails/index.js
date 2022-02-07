@@ -1,6 +1,4 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { Table, Button, FormPets } from '../../components'
+import React from 'react'
 import {
   useLocation
 } from "react-router-dom";
@@ -8,7 +6,6 @@ import {
   Container,
   Section,
   Title,
-  SubTitle,
   DogBox,
   Avatar,
   TextAge,
