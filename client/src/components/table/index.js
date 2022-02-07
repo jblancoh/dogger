@@ -12,12 +12,15 @@ import {
   Label,
 } from './styled'
 import styled from 'styled-components'
-
+import _ from 'lodash'
 import { useTable } from 'react-table'
 
 const Styles = styled.div`
   padding: 1rem;
-
+  a {
+    text-decoration: none;
+    color: black;
+  }
   table {
     border-spacing: 0;
     border: 1px solid black;
@@ -55,6 +58,7 @@ const Table = ({ columns, data }) => {
     columns,
     data,
   })
+
   return (
     <Styles>
       <table {...getTableProps()}>
@@ -73,7 +77,19 @@ const Table = ({ columns, data }) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                  let row = cell.row.original
+                  return <td {...cell.getCellProps()}>
+                    {_.isEmpty(row.walker) ?
+                      <Link
+                        to={{
+                          pathname: "/details",
+                          state: row
+                        }}>
+                        {cell.render('Cell')}
+                      </Link>
+                      : cell.render('Cell')
+                    }
+                  </td>
                 })}
               </tr>
             )

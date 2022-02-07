@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { ToastContainer } from 'react-toastify';
+import Modal from 'react-modal';
 import {
   BrowserRouter as Router,
   Switch,
@@ -13,8 +14,10 @@ import {
   LogIn,
   SignUp,
   Dashboard,
+  DashboardDetails,
 } from './containers';
 import 'react-toastify/dist/ReactToastify.css';
+Modal.setAppElement('#root');
 
 const AuthRoute = ({ children, isLogged, ...rest }) => {
   return (
@@ -57,6 +60,12 @@ function App(props) {
             path="/dashboard"
           >
             <Dashboard />
+          </AuthRoute>
+          <AuthRoute
+            isLogged={isLogged}
+            path="/details"
+          >
+            <DashboardDetails />
           </AuthRoute>
         </Switch>
       </div>

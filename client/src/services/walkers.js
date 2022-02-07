@@ -1,9 +1,9 @@
 import request from './request'
 
-function setpet(params) {
+function setwalkerreserve(params) {
   return request({
-    url: 'api/v1/dogs/',
-    method: 'POST',
+    url: `api/v1/dogs/${params.dog_id}/`,
+    method: 'PUT',
     headers: {
       'Authorization': `Token ${params.access_token}`
     },
@@ -11,9 +11,9 @@ function setpet(params) {
   });
 }
 
-function getpet(params) {
+function getwalkers(params) {
   return request({
-    url: `api/v1/dogs/${params.data.id}/`,
+    url: `api/v1/walkers/`,
     method: 'GET',
     headers: {
       'Authorization': `Token ${params.access_token}`
@@ -23,8 +23,8 @@ function getpet(params) {
 
 
 const PetsService = {
-  setpet,
-  getpet,
+  setwalkerreserve,
+  getwalkers,
 }
 
 export default PetsService;

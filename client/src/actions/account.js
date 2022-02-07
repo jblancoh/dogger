@@ -46,7 +46,6 @@ export const SignUpUser = async (params) => {
 
 export const LogoutUser = () => {
   return dispatch => {
-    dispatch({ 'type': 'LOG_IN', payload: false })
-    dispatch({ 'type': 'GET_USER', payload: {} })
+    dispatch({ 'type': 'LOG_OUT' })
   }
 } 
