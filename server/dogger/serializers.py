@@ -25,10 +25,14 @@ class UserModelSerialzer(serializers.ModelSerializer):
       depth = 1
 
 class WalkerSerializer(serializers.ModelSerializer):
-    walker = UserModelSerialzer(read_only=True)
     schedules = ScheduleSerializer(many=True, read_only=True)
     status = serializers.SerializerMethodField("status_method")
     dogs = serializers.SerializerMethodField("dogs_method")
+    walker = serializers.SerializerMethodField('filter_method')
+
+    def filter_method(self, obj):
+        users = Users.objects.filter(is_walker=True)
+        return UserModelSerialzer(users, many=True).data
 
     def status_method(self, obj):
         schedules = obj.schedules.all()
