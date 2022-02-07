@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Modal from 'react-modal';
 import { SetPet, GetPet } from '../../actions/pets'
-import { GetWalkers, SetWalkerReserve, GetWalker } from '../../actions/walkers'
-import { Table, Button, FormPets } from '../../components'
+import { GetWalkers, SetWalkerReserve, GetWalker, SetSchedule } from '../../actions/walkers'
+import { Table, Button, FormPets, FormSchedules } from '../../components'
 import { Formik } from 'formik'
 import { toast } from 'react-toastify';
 import {
@@ -46,6 +46,7 @@ const Dashboard = () => {
   const [dataDogs, setDataDogs] = useState([])
   const [dataWalkers, setDataWalkers] = useState([])
   const [dogsToWalk, setDogsToWalk] = useState([])
+  const [mySchedules, setMySchedules] = useState([])
   const [visibleModal, SetVisibleModal] = useState(false)
   const [selectedWalker, SetSelectedWalker] = useState('')
   const [selectedSchedules, SetSelectedSchedules] = useState([])
@@ -173,6 +174,26 @@ const Dashboard = () => {
   ],
     [])
 
+  const dataTableDogsToWalk = React.useMemo(() => dogsToWalk, [dogsToWalk])
+
+  const columnsMySchedules = React.useMemo(() => [
+    {
+      Header: 'Día',
+      accessor: 'day_of_week',
+    },
+    {
+      Header: 'Hora',
+      accessor: 'hour',
+    },
+    {
+      Header: 'Tamaño',
+      accessor: 'size.size',
+    },
+  ],
+    [])
+
+  const dataTableMySchedules = React.useMemo(() => mySchedules, [mySchedules])
+
   useEffect(() => {
     if (userData.data.is_walker) {
       GetMyData()
@@ -182,7 +203,7 @@ const Dashboard = () => {
     }
   }, [])
 
-  const setNewPet = async (params) => {
+  const SetNewPet = async (params) => {
     params['owner_id'] = userData.data.id
     params['access_token'] = userData.access_token
     const dataDogsResponse = await SetPet(params)
@@ -190,6 +211,15 @@ const Dashboard = () => {
       setShowForm(false)
       setDataDogs([...dataDogs, dataDogsResponse])
 
+    }
+  }
+  const SetNewSchedule = async (params) => {
+    params['walker_id'] = userData.data.id
+    params['access_token'] = userData.access_token
+    const dataNewSchedule = await SetSchedule(params)
+    if (!_.isEmpty(dataNewSchedule)) {
+      setShowForm(false)
+      setMySchedules(dataNewSchedule.schedules.schedules)
     }
   }
 
@@ -221,6 +251,7 @@ const Dashboard = () => {
     const dataWalkersResponse = await GetWalker(params)
     if (!_.isEmpty(dataWalkersResponse)) {
       setDogsToWalk(dataWalkersResponse.dogs)
+      setMySchedules(dataWalkersResponse.schedules.schedules)
     }
   }
 
@@ -251,16 +282,39 @@ const Dashboard = () => {
       <Title align='center'>{title}</Title>
       {userData.data.is_walker ?
         <>
-          <SubTitle>My Dogs</SubTitle>
+          <SubTitle>Mis asignados</SubTitle>
           <Section>
             <TableContainer>
-              <Table columns={columnsDogsToWalk} data={dogsToWalk} />
+              <Table columns={columnsDogsToWalk} data={dataTableDogsToWalk} />
+            </TableContainer>
+          </Section>
+          <SubTitle>Mis horarios</SubTitle>
+          {!showForm &&
+            <ButtonsContainer>
+              <>
+                <Button onPress={() => setShowForm(!showForm)}>
+                  Agregar
+                </Button>
+              </>
+            </ButtonsContainer>
+          }
+          <Section>
+            <TableContainer>
+              {showForm ?
+                <FormSchedules
+                  submitForm={SetNewSchedule}
+                  setShowForm={setShowForm}
+                />
+                :
+                <Table columns={columnsMySchedules} data={dataTableMySchedules} />
+              }
+
             </TableContainer>
           </Section>
         </>
         :
         <>
-          <SubTitle>My Dogs</SubTitle>
+          <SubTitle>Mis mascotas</SubTitle>
           <Section>
             {!showForm &&
               <ButtonsContainer>
@@ -274,14 +328,14 @@ const Dashboard = () => {
             <TableContainer>
               {showForm ?
                 <FormPets
-                  submitForm={setNewPet}
+                  submitForm={SetNewPet}
                   setShowForm={setShowForm} />
                 :
                 <Table columns={columns} data={data} />
               }
             </TableContainer>
           </Section>
-          <SubTitle>Walkers</SubTitle>
+          <SubTitle>Paseantes</SubTitle>
           <Section>
             <TableContainer>
               <Table columns={columnsWalkers} data={dataTableWalkers} />

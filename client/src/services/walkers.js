@@ -31,10 +31,22 @@ function getwalker(params) {
   });
 }
 
+function setschedule(params) {
+  return request({
+    url: `api/v1/scheduled-walks/`,
+    method: 'POST',
+    headers: {
+      'Authorization': `Token ${params.access_token}`
+    },
+    data: params
+  });
+}
+
 const PetsService = {
   setwalkerreserve,
   getwalkers,
   getwalker,
+  setschedule,
 }
 
 export default PetsService;
