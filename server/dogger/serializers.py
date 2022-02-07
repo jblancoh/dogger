@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate, password_validation
 from django.core.validators import RegexValidator
+from django.forms import CharField
+from django.db.models import F
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
@@ -35,7 +37,7 @@ class WalkerSerializer(serializers.ModelSerializer):
         return False
 
     def dogs_method(self, obj):
-        dogs = Dogs.objects.filter(walker=obj).values()        
+        dogs = Dogs.objects.filter(walker=obj).values()
         return dogs
     class Meta:
         model = PetWalkers
@@ -159,9 +161,31 @@ class DogSizeSerializer(serializers.ModelSerializer):
         model = DogSize
         fields = '__all__'
 
-class ScheduledWalkSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ScheduledWalks
-        fields = '__all__'
-        depth = 3
+class DogsSerialzer(serializers.ModelSerializer):
+  size = serializers.StringRelatedField()
+  breed = serializers.StringRelatedField()
+  schedule = serializers.SerializerMethodField("schedule_method")
 
+  def schedule_method(self, obj):
+      schedule = ScheduledWalks.objects.filter(dog=obj).annotate(day=F('schedule__day_of_week'), hour=F('schedule__hour')).values('day', 'hour')
+      return schedule
+  class Meta:
+      model = Dogs
+      fields=('id','name','size','age', 'breed','schedule')
+      depth = 1
+class WalkerDetailSerializer(serializers.Serializer):
+    walker = UserModelSerialzer(read_only=True)
+    id = serializers.IntegerField(read_only=True)
+    dogs = serializers.SerializerMethodField("dogs_method")
+    first_name= serializers.CharField(min_length=2, max_length=30, required=False)
+    last_name= serializers.CharField(min_length=2, max_length=30, required=False)
+    email=serializers.EmailField()
+
+    def dogs_method(self, obj):
+        pet_walker = PetWalkers.objects.get(walker=obj)
+        dogs = Dogs.objects.filter(walker=pet_walker)
+        data = DogsSerialzer(dogs, many=True).data
+        return data
+    class Meta:
+        model = Users
+        fields = ['id', 'first_name','last_name', 'email','dogs']

@@ -288,6 +288,24 @@ class WalkersDetailsView(APIView):
 		user = self.get_object(pk)
 		user.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
+
+class WalkerDetailsView(APIView):
+	"""
+	Retrieve, update or delete a walker instance.
+	"""
+	
+	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	
+	def get_object(self, pk):
+		try:
+			return UsersModel.objects.get(pk=pk)
+		except UsersModel.DoesNotExist:
+			raise Http404
+
+	def get(self, request, pk, format=None):
+		user = self.get_object(pk)
+		serializer = WalkerDetailSerializer(user)
+		return Response(serializer.data)
 class UsersView(APIView):
 	"""
 	Login and list users
