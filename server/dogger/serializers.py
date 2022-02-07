@@ -106,10 +106,8 @@ class UserSignUpSerializer(serializers.Serializer):
     def create(self, data):
         data.pop('password_confirmation')
         data['username'] = data['email']
-        if data['is_owner'] == False:
-          data['is_walker'] = True
         user = Users.objects.create_user(**data)
-        if data['is_owner'] == True:
+        if data['is_owner'] == False:
           walker = PetWalkers.objects.create(walker=user)
         return user
 
