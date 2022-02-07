@@ -202,10 +202,15 @@ class ScheduledWalksView(APIView):
 		return Response(serializer.data)
 
 	def post(self, request, format=None):
+		if request.data.get('size') == '':
+			request.data.pop('size')
 		serializer = ScheduledWalkSerializer(data=request.data)
+		# PetWalkers.objects.get(pk=validated_data['walker_id'])
 		if serializer.is_valid():
+			user = UsersModel.objects.get(pk=request.data.get('walker_id'))
+			walker = WalkerDetailSerializer(user)
 			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
+			return Response(walker.data, status=status.HTTP_201_CREATED)
 		return  Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	
 class ScheduledWalksDetailsView(APIView):
