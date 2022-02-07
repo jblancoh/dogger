@@ -127,16 +127,25 @@ class DogSerializer(serializers.Serializer):
     def create(self, validated_data):
         validated_data['owner'] = Users.objects.get(pk=validated_data['owner_id'])
         validated_data['size'] = DogSize.objects.get(size=validated_data['size'])
-        validated_data['breed'] = DogBreed.objects.get(name=validated_data['breed'])
+        try:
+          validated_data['breed'] = DogBreed.objects.get(name=validated_data['breed'])
+        except DogBreed.DoesNotExist:
+          raise serializers.ValidationError({'message': 'Invalid data'})
         dog = Dogs.objects.create(**validated_data)
         return dog
     
-    def update(self,instance, validated_data):
+    def update(self,instance,validated_data):
         if 'walker_id' in validated_data:
           try:
-            schedulesWalkers = ScheduledWalks.objects.filter(schedule=validated_data['schedule_id'])
-            validated_data['schedule'] = Schedules.objects.get(pk=validated_data['schedule_id'])
-            if len(schedulesWalkers) > 3:
+            schedules_walkers = ScheduledWalks.objects.filter(schedule=validated_data['schedule_id'])
+            schedule = Schedules.objects.get(pk=validated_data['schedule_id'])
+            schedule_size = schedule.size
+            
+            validated_data['schedule'] = schedule
+            if schedule_size is not None:
+              if schedule_size != instance.size:
+                raise serializers.ValidationError({'message': 'Este paseador establecio un tamaño diferente de perro para esta hora'})
+            if len(schedules_walkers) > 3:
               raise serializers.ValidationError({'message': 'Este paseador no cuenta con este horario disponible, favor de seleccionar otro horario o fecha'})
           except Schedules.DoesNotExist:
             raise Http404
@@ -155,6 +164,7 @@ class DogSerializer(serializers.Serializer):
         instance.name = validated_data.get("name", instance.name)
         instance.age = validated_data.get("age", instance.age)
         instance.save()
+
         return instance
     
 class DogSizeSerializer(serializers.ModelSerializer):

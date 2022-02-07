@@ -205,7 +205,6 @@ class ScheduledWalksView(APIView):
 		if request.data.get('size') == '':
 			request.data.pop('size')
 		serializer = ScheduledWalkSerializer(data=request.data)
-		# PetWalkers.objects.get(pk=validated_data['walker_id'])
 		if serializer.is_valid():
 			user = UsersModel.objects.get(pk=request.data.get('walker_id'))
 			walker = WalkerDetailSerializer(user)
