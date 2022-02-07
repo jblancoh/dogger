@@ -3,6 +3,7 @@ import Input from './input'
 import Navbar from './navbar'
 import Table from './table'
 import FormPets from './formPets'
+import FormSchedules from './formSchedules'
 
 export {
   Button,
@@ -10,4 +11,5 @@ export {
   Navbar,
   Table,
   FormPets,
+  FormSchedules,
 }

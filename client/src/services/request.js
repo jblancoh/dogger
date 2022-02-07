@@ -3,7 +3,8 @@ import axios from 'axios';
 // Create axios service
 
 const service = axios.create({
-  baseURL: 'https://backenddogger.herokuapp.com/',
+  // baseURL: 'https://backenddogger.herokuapp.com/',
+  baseURL: 'http://localhost:8000/',
   headers: { Accept: 'application/json' },
 });
 

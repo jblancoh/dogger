@@ -51,3 +51,21 @@ export const GetWalker = async (params) => {
       }
     })
 }
+
+//setschedule
+
+export const SetSchedule = async (params) => {
+  return await WalkersService.setschedule(params)
+    .then((response) => {
+      return response
+    })
+    .catch(err => {
+      if (err.status !== 404 && err.data) {
+        Object.keys(err.data).forEach(item => {
+          toast.error(`${err.data[item]}`)
+        })
+      } else {
+        toast.error(err.message)
+      }
+    })
+}

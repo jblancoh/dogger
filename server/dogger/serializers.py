@@ -45,9 +45,10 @@ class WalkerSerializer(serializers.ModelSerializer):
 
 class WalkerDogSerializer(serializers.ModelSerializer):
     walker = UserModelSerialzer(read_only=True)
+    schedules = ScheduleSerializer(many=True, read_only=True)
     class Meta:
         model = PetWalkers
-        fields = ['walker']
+        fields = ['walker', 'schedules']
 class DogsModelSerialzer(serializers.ModelSerializer):
   size = serializers.StringRelatedField()
   breed = serializers.StringRelatedField()
@@ -126,16 +127,25 @@ class DogSerializer(serializers.Serializer):
     def create(self, validated_data):
         validated_data['owner'] = Users.objects.get(pk=validated_data['owner_id'])
         validated_data['size'] = DogSize.objects.get(size=validated_data['size'])
-        validated_data['breed'] = DogBreed.objects.get(name=validated_data['breed'])
+        try:
+          validated_data['breed'] = DogBreed.objects.get(name=validated_data['breed'])
+        except DogBreed.DoesNotExist:
+          raise serializers.ValidationError({'message': 'Invalid data'})
         dog = Dogs.objects.create(**validated_data)
         return dog
     
-    def update(self,instance, validated_data):
+    def update(self,instance,validated_data):
         if 'walker_id' in validated_data:
           try:
-            schedulesWalkers = ScheduledWalks.objects.filter(schedule=validated_data['schedule_id'])
-            validated_data['schedule'] = Schedules.objects.get(pk=validated_data['schedule_id'])
-            if len(schedulesWalkers) > 3:
+            schedules_walkers = ScheduledWalks.objects.filter(schedule=validated_data['schedule_id'])
+            schedule = Schedules.objects.get(pk=validated_data['schedule_id'])
+            schedule_size = schedule.size
+            
+            validated_data['schedule'] = schedule
+            if schedule_size is not None:
+              if schedule_size != instance.size:
+                raise serializers.ValidationError({'message': 'Este paseador establecio un tamaño diferente de perro para esta hora'})
+            if len(schedules_walkers) > 3:
               raise serializers.ValidationError({'message': 'Este paseador no cuenta con este horario disponible, favor de seleccionar otro horario o fecha'})
           except Schedules.DoesNotExist:
             raise Http404
@@ -154,6 +164,7 @@ class DogSerializer(serializers.Serializer):
         instance.name = validated_data.get("name", instance.name)
         instance.age = validated_data.get("age", instance.age)
         instance.save()
+
         return instance
     
 class DogSizeSerializer(serializers.ModelSerializer):
@@ -177,6 +188,7 @@ class WalkerDetailSerializer(serializers.Serializer):
     walker = UserModelSerialzer(read_only=True)
     id = serializers.IntegerField(read_only=True)
     dogs = serializers.SerializerMethodField("dogs_method")
+    schedules = serializers.SerializerMethodField("schedules_method")
     first_name= serializers.CharField(min_length=2, max_length=30, required=False)
     last_name= serializers.CharField(min_length=2, max_length=30, required=False)
     email=serializers.EmailField()
@@ -186,6 +198,32 @@ class WalkerDetailSerializer(serializers.Serializer):
         dogs = Dogs.objects.filter(walker=pet_walker)
         data = DogsSerialzer(dogs, many=True).data
         return data
+    
+    def schedules_method(self, obj):
+        try:
+          pet_walker = PetWalkers.objects.get(walker=obj)
+        except PetWalkers.DoesNotExist:
+          raise serializers.ValidationError('Invalid data')
+        return WalkerDogSerializer(pet_walker).data
     class Meta:
         model = Users
-        fields = ['id', 'first_name','last_name', 'email','dogs']
+        fields = ['id', 'first_name','last_name', 'email','dogs','schedules']
+class ScheduledWalkSerializer(serializers.Serializer):
+    size = serializers.CharField(min_length=2, max_length=30, required=False)
+    day_of_week = serializers.CharField(min_length=2, max_length=30)
+    hour = serializers.CharField(min_length=1, max_length=3,required=False)
+    walker_id = serializers.IntegerField(required=False)
+
+    def create(self, validated_data):
+        if 'size' in validated_data:
+          validated_data['size'] = DogSize.objects.get(size=validated_data['size'])
+        try:
+          instance = PetWalkers.objects.get(walker=validated_data['walker_id'])
+          validated_data.pop('walker_id')
+          schedules = Schedules.objects.create(**validated_data)
+          instance.schedules.add(schedules)
+          instance.save()
+        except PetWalkers.DoesNotExist:
+          raise serializers.ValidationError('Invalid data')
+        
+        return schedules

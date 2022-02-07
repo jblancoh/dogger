@@ -68,7 +68,7 @@ const Table = ({ columns, data }) => {
                 {row.cells.map(cell => {
                   let data = cell.row.original
                   return <td {...cell.getCellProps()}>
-                    {_.isEmpty(row.walker) ?
+                    {_.isEmpty(data.walker) ?
                       <Link
                         to={{
                           pathname: "/details",
