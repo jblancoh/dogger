@@ -77,13 +77,13 @@ const Table = ({ columns, data }) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => {
-                  let row = cell.row.original
+                  let data = cell.row.original
                   return <td {...cell.getCellProps()}>
                     {_.isEmpty(row.walker) ?
                       <Link
                         to={{
                           pathname: "/details",
-                          state: row
+                          state: data
                         }}>
                         {cell.render('Cell')}
                       </Link>

@@ -4,7 +4,6 @@ import _ from 'lodash'
 
 
 export const SetWalkerReserve = async (params) => {
-  console.log('params', params)
   return await WalkersService.setwalkerreserve(params)
     .then(async (response) => {
       toast.success(`
@@ -13,7 +12,6 @@ export const SetWalkerReserve = async (params) => {
       return response
     })
     .catch(err => {
-      console.log('err', err.data)
       if (err.status !== 404 && err.data) {
         Object.keys(err.data).forEach(item => {
           toast.error(`${err.data[item]}`)
@@ -25,6 +23,21 @@ export const SetWalkerReserve = async (params) => {
 }
 export const GetWalkers = async (params) => {
   return await WalkersService.getwalkers(params)
+    .then((response) => {
+      return response
+    })
+    .catch(err => {
+      if (err.status !== 404 && err.data) {
+        Object.keys(err.data).forEach(item => {
+          toast.error(`${err.data[item]}`)
+        })
+      } else {
+        toast.error(err.message)
+      }
+    })
+}
+export const GetWalker = async (params) => {
+  return await WalkersService.getwalker(params)
     .then((response) => {
       return response
     })

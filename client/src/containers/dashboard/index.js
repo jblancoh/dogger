@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Modal from 'react-modal';
 import { SetPet, GetPet } from '../../actions/pets'
-import { GetWalkers, SetWalkerReserve } from '../../actions/walkers'
+import { GetWalkers, SetWalkerReserve, GetWalker } from '../../actions/walkers'
 import { Table, Button, FormPets } from '../../components'
 import { Formik } from 'formik'
 import { toast } from 'react-toastify';
@@ -29,6 +29,16 @@ const customStyles = {
     width: '40rem',
   },
 };
+
+const days = {
+  'monday': 'L',
+  'tuesday': 'M',
+  'wednesday': 'X',
+  'thursday': 'J',
+  'friday': 'V',
+  'saturday': 'S',
+  'sunday': 'D',
+}
 
 const Dashboard = () => {
   const userData = useSelector(state => state.user)
@@ -143,7 +153,16 @@ const Dashboard = () => {
         },
         {
           Header: 'Horario asignado',
-          accesor: 'schedule'
+          accesor: 'schedule',
+          Cell: (props) => {
+            const { schedule } = props.row.original
+            return schedule.map((item, index) => (
+              <div key={`${item.day}_${index}`} style={{ border: '2px solid #D1551A', margin: 5, background: '#F6A970' }}>
+                <p>{`Día: ${days[item.day]}`}</p>
+                <p>{`Hora: ${item.hour}`}</p>
+              </div>
+            ))
+          },
         },
         {
           Header: 'Telefono',
@@ -155,8 +174,12 @@ const Dashboard = () => {
     [])
 
   useEffect(() => {
-    GetPetsByOwner()
-    GetWalkersAvailable()
+    if (userData.data.is_walker) {
+      GetMyData()
+    } else {
+      GetPetsByOwner()
+      GetWalkersAvailable()
+    }
   }, [])
 
   const setNewPet = async (params) => {
@@ -189,6 +212,15 @@ const Dashboard = () => {
         return item
       })
       setDataWalkers(walkers)
+    }
+  }
+  const GetMyData = async () => {
+    const params = {}
+    params['access_token'] = userData.access_token
+    params['id'] = userData.data.id
+    const dataWalkersResponse = await GetWalker(params)
+    if (!_.isEmpty(dataWalkersResponse)) {
+      setDogsToWalk(dataWalkersResponse.dogs)
     }
   }
 
@@ -228,9 +260,6 @@ const Dashboard = () => {
         </>
         :
         <>
-          {/* <SubTitle>Schedule</SubTitle>
-      <Section>
-      </Section> */}
           <SubTitle>My Dogs</SubTitle>
           <Section>
             {!showForm &&
@@ -259,8 +288,6 @@ const Dashboard = () => {
             </TableContainer>
           </Section>
         </>
-
-
       }
       <Modal
         isOpen={visibleModal}

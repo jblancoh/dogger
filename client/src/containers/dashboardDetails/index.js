@@ -18,7 +18,6 @@ import {
 
 const DashboardDetails = () => {
   let location = useLocation();
-  console.log('location', location)
   const {
     name,
     breed,

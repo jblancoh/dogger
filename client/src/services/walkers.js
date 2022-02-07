@@ -21,10 +21,20 @@ function getwalkers(params) {
   });
 }
 
+function getwalker(params) {
+  return request({
+    url: `api/v1/walkers/${params.id}/`,
+    method: 'GET',
+    headers: {
+      'Authorization': `Token ${params.access_token}`
+    }
+  });
+}
 
 const PetsService = {
   setwalkerreserve,
   getwalkers,
+  getwalker,
 }
 
 export default PetsService;
