@@ -13,7 +13,7 @@ export const LoginUser = (params) => {
       })
       .catch(err => {
         dispatch({ 'type': 'LOG_IN', payload: false })
-        if (err.data) {
+        if (err.status !== 404 && err.data) {
           Object.keys(err.data).forEach(item => {
             toast.error(`${err.data[item]}`)
           })
