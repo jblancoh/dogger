@@ -1,7 +1,5 @@
 import PetsService from '../services/pets'
 import { toast } from 'react-toastify';
-import _ from 'lodash'
-
 
 export const SetPet = async (params) => {
   return await PetsService.setpet(params)

@@ -16,7 +16,7 @@ urlpatterns = [
     path('scheduled-walks/', views.ScheduledWalksView.as_view()),
     path('scheduled-walks/<int:pk>/', views.ScheduledWalksDetailsView.as_view()),
     path('walkers/', views.WalkersView.as_view()),
-    path('walkers/<int:pk>/', views.WalkersDetailsView.as_view()),
+    path('walkers/<int:pk>/', views.WalkerDetailsView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -1,16 +1,5 @@
 import React from 'react'
-import { connect, useDispatch } from 'react-redux'
 import { Link } from "react-router-dom";
-import { LogoutUser } from "../../actions/account"
-import { Button } from '../'
-import {
-  ButtonsContainer,
-  Container,
-  Logo,
-  Title,
-  TitleContainer,
-  Label,
-} from './styled'
 import styled from 'styled-components'
 import _ from 'lodash'
 import { useTable } from 'react-table'
