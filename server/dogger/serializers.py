@@ -25,16 +25,10 @@ class UserModelSerialzer(serializers.ModelSerializer):
       depth = 1
 
 class WalkerSerializer(serializers.ModelSerializer):
-    # walker = UserModelSerialzer(read_only=True)
+    walker = UserModelSerialzer(read_only=True)
     schedules = ScheduleSerializer(many=True, read_only=True)
     status = serializers.SerializerMethodField("status_method")
     dogs = serializers.SerializerMethodField("dogs_method")
-
-    walker = serializers.SerializerMethodField('filter_method')
-
-    def filter_method(self, obj):
-        users = Users.objects.filter(is_walker=True)
-        return UserModelSerialzer(users, many=True).data[0]
 
     def status_method(self, obj):
         schedules = obj.schedules.all()
@@ -112,12 +106,11 @@ class UserSignUpSerializer(serializers.Serializer):
     def create(self, data):
         data.pop('password_confirmation')
         data['username'] = data['email']
-        if data['is_owner']:
-          data['is_owner'] = data['is_owner']
-        else:
+        if data['is_owner'] == False:
           data['is_walker'] = True
         user = Users.objects.create_user(**data)
-        walker = PetWalkers.objects.create(walker=user)
+        if data['is_owner'] == True:
+          walker = PetWalkers.objects.create(walker=user)
         return user
 
 class DogSerializer(serializers.Serializer):
