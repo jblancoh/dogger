@@ -15,7 +15,6 @@ import {
 const Navbar = (props) => {
   const dispatch = useDispatch()
   const { isLogged, user } = props
-  console.log('user', user)
   const handleLogout = () => {
     dispatch(LogoutUser())
   }
@@ -46,11 +45,11 @@ const Navbar = (props) => {
         )
         : <ButtonsContainer>
           <Label>
-            {`Hola ${user.first_name}`}
+            {`Hola ${user ? user.first_name : ''}`}
           </Label>
           <Link to="/dashboard">
             <Button>
-              Mascotas
+              Dashboard
             </Button>
           </Link>
           <Button onPress={handleLogout}>

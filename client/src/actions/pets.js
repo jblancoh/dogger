@@ -3,23 +3,33 @@ import { toast } from 'react-toastify';
 import _ from 'lodash'
 
 
-export const SetPet = (params) => {
-  return async (dispatch) => {
-    await PetsService.setpet(params)
-      .then(async (response) => {
-        // dispatch({ 'type': 'LOG_IN', payload: true })
-        // dispatch({ 'type': 'GET_USER', payload: response })
-        // params.history.push("/dashboard");
-      })
-      .catch(err => {
-        // dispatch({ 'type': 'LOG_IN', payload: false })
-        // if (err.data) {
-        //   Object.keys(err.data).forEach(item => {
-        //     toast.error(`${err.data[item]}`)
-        //   })
-        // } else {
-        //   toast.error(err.message)
-        // }
-      })
-  }
+export const SetPet = async (params) => {
+  return await PetsService.setpet(params)
+    .then(async (response) => {
+      return response
+    })
+    .catch(err => {
+      if (err.status !== 404 && err.data) {
+        Object.keys(err.data).forEach(item => {
+          toast.error(`${err.data[item]}`)
+        })
+      } else {
+        toast.error(err.message)
+      }
+    })
+}
+export const GetPet = async (params) => {
+  return await PetsService.getpet(params)
+    .then((response) => {
+      return response
+    })
+    .catch(err => {
+      if (err.status !== 404 && err.data) {
+        Object.keys(err.data).forEach(item => {
+          toast.error(`${err.data[item]}`)
+        })
+      } else {
+        toast.error(err.message)
+      }
+    })
 }

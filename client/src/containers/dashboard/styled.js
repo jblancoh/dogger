@@ -41,7 +41,7 @@ export const SubTitle = styled.h3`
   font-size: 2.5rem;
 `
 
-export const Paragraph = styled.p`
+export const Span = styled.span`
   font-size: 1.5rem;
 `
 
@@ -52,4 +52,33 @@ export const ButtonsContainer = styled.div`
   justify-content: flex-end;
   width: 100%;
   margin-right: 10px;
+`
+
+export const Section = styled.section`
+  display: flex;
+  justify-content: flex-start;
+  flex: 2;
+  flex-direction: column;
+  background: '#FFF';
+
+`
+
+export const SectionModal = styled.section`
+  display: flex;
+  justify-content: flex-start;
+  flex: 2;
+  flex-direction: column;
+  background: '#FFF';
+  margin: 2rem;
+`
+
+export const List = styled.ul`
+  margin: 1rem;
+`
+export const SectionList = styled.div`
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  flex-direction: column;
+  margin: 2rem;
 `

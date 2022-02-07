@@ -39,7 +39,7 @@ class WalkerSerializer(serializers.ModelSerializer):
         return dogs
     class Meta:
         model = PetWalkers
-        fields = ['walker','schedules', 'status','dogs']
+        fields = ['id', 'walker','schedules', 'status','dogs']
 
 class WalkerDogSerializer(serializers.ModelSerializer):
     walker = UserModelSerialzer(read_only=True)
@@ -131,12 +131,15 @@ class DogSerializer(serializers.Serializer):
     def update(self,instance, validated_data):
         if 'walker_id' in validated_data:
           try:
-            validated_data['walker'] = PetWalkers.objects.get(pk=validated_data['walker_id'])
-          except PetWalkers.DoesNotExist:
+            schedulesWalkers = ScheduledWalks.objects.filter(schedule=validated_data['schedule_id'])
+            validated_data['schedule'] = Schedules.objects.get(pk=validated_data['schedule_id'])
+            if len(schedulesWalkers) > 3:
+              raise serializers.ValidationError({'message': 'Este paseador no cuenta con este horario disponible, favor de seleccionar otro horario o fecha'})
+          except Schedules.DoesNotExist:
             raise Http404
           try:
-            validated_data['schedule'] = Schedules.objects.get(pk=validated_data['schedule_id'])
-          except Schedules.DoesNotExist:
+            validated_data['walker'] = PetWalkers.objects.get(pk=validated_data['walker_id'])
+          except PetWalkers.DoesNotExist:
             raise Http404
           instance.walker  = validated_data.get("walker", instance.walker)
           schedule_walker = ScheduledWalks.objects.create(schedule=validated_data['schedule'], dog=instance)
@@ -148,7 +151,6 @@ class DogSerializer(serializers.Serializer):
           instance.breed = validated_data.get("breed", instance.breed)
         instance.name = validated_data.get("name", instance.name)
         instance.age = validated_data.get("age", instance.age)
-        
         instance.save()
         return instance
     

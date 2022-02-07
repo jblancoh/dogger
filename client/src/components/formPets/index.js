@@ -2,27 +2,21 @@ import React from 'react'
 import { Formik } from 'formik'
 import { Input, Button } from '../'
 import { SelectContainer, Container } from './styled'
-import { SetPet } from '../../actions/pets'
-import { useDispatch } from 'react-redux'
 
 const initialValues = {
-  'dogBreed': '',
+  'name': '',
   'age': 0,
+  'breed': 'Pastor Alemán',
   'size': "small",
 }
 
-const FormPets = ({ setShowForm }) => {
-  const dispatch = useDispatch()
+const FormPets = ({ submitForm, setShowForm }) => {
   return (
     <Formik
       initialValues={initialValues}
       // validationSchema={logInValidation}
       onSubmit={(props) => {
-        console.log('Create pet', props)
-        dispatch(SetPet(props))
-        setShowForm(false)
-        // props['history'] = history
-        // dispatch(LoginUser(props))
+        submitForm(props)
       }}
     >
       {({
@@ -36,13 +30,13 @@ const FormPets = ({ setShowForm }) => {
       }) => (
         <Container>
           <Input
-            error={errors.dogBreed}
-            label='Raza'
-            name='dogBreed'
+            error={errors.name}
+            label='Nombre'
+            name='name'
             onBlur={handleBlur}
             onChange={handleChange}
             type='text'
-            value={values.dogBreed}
+            value={values.name}
           />
           <Input
             error={errors.age}
@@ -53,6 +47,21 @@ const FormPets = ({ setShowForm }) => {
             type='text'
             value={values.age}
           />
+          <SelectContainer>
+            <label>
+              {`Raza`}
+            </label>
+            <select
+              name="breed"
+              value={values.breed}
+              onChange={handleChange}
+            >
+              <option value="Pastor Alemán">Pastor Alemán</option>
+              <option value="Chihuahua">Chihuahua</option>
+              <option value="Poddle">Poddle</option>
+              <option value="Labrador Retrieve">Labrador Retrieve</option>
+            </select>
+          </SelectContainer>
           <SelectContainer>
             <label>
               {`Tamaño`}
@@ -73,6 +82,12 @@ const FormPets = ({ setShowForm }) => {
               onPress={handleSubmit}
             >
               Registrar
+            </Button>
+            <Button
+              onPress={() => setShowForm(false)}
+              secondary
+            >
+              Cancelar
             </Button>
           </SelectContainer>
         </Container>
