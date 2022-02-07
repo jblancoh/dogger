@@ -54,3 +54,20 @@ yarn add react-table
 #### Documentación
 
 [react-table](https://react-table.tanstack.com/docs/overview)
+
+---
+
+
+## React-modal
+
+  Componente modal de dialog para React.js
+
+#### Instalación
+
+```
+npm install react-modal
+yarn add react-modal
+```
+#### Documentación
+
+[react-modal](http://reactcommunity.org/react-modal/)
