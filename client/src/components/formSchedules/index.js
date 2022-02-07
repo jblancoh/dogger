@@ -35,7 +35,7 @@ var days = [
 const initialValues = {
   'day_of_week': '',
   'hour': '',
-  'size': null,
+  'size': '',
 }
 
 const FormSchedules = ({ submitForm, setShowForm }) => {
