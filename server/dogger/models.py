@@ -24,7 +24,7 @@ class Users(AbstractUser):
     address = models.CharField(max_length=150, null=True, blank=True)
     is_owner = models.BooleanField(default=False)
     is_walker = models.BooleanField(default=False)
-    timestamp= models.DateTimeField(auto_now_add=True)
+    timestamp= models.DateTimeField(auto_now_add=True, auto_now=False)
 
     def __str__ (self):
         return "%s - %s %s - %s" % (self.first_name, self.email,self.timestamp, self.is_walker)
